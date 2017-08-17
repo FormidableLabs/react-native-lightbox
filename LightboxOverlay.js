@@ -175,6 +175,7 @@ var LightboxOverlay = React.createClass({
       isAnimating,
       openVal,
       target,
+      closeOrigin,
       isClosing,
     } = this.state;
 
