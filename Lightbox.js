@@ -79,6 +79,7 @@ var Lightbox = React.createClass({
       backgroundColor: this.props.backgroundColor,
       children: this.getContent(),
       onClose: this.onClose,
+      onBeforeClose: this.onBeforeClose,
     };
   },
 
@@ -118,6 +119,12 @@ var Lightbox = React.createClass({
 
   close: function() {
     throw new Error('Lightbox.close method is deprecated. Use renderHeader(close) prop instead.')
+  },
+
+  onBeforeClose(cb) {
+    this._root.measure((ox, oy, width, height, px, py) => {
+      cb(ox, oy, width, height, px, py);
+    });
   },
 
   onClose: function() {
