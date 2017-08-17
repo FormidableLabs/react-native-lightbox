@@ -43,6 +43,7 @@ var LightboxOverlay = React.createClass({
     onOpen:          PropTypes.func,
     onClose:         PropTypes.func,
     swipeToDismiss:  PropTypes.bool,
+    onBeforeClose:   PropTypes.func,
   },
 
   getInitialState: function() {
@@ -56,6 +57,7 @@ var LightboxOverlay = React.createClass({
       },
       pan: new Animated.Value(0),
       openVal: new Animated.Value(0),
+      isClosing: false,
     };
   },
 
@@ -129,18 +131,27 @@ var LightboxOverlay = React.createClass({
   },
 
   close: function() {
-    StatusBar.setHidden(false, 'fade');
-    this.setState({
-      isAnimating: true,
-    });
-    Animated.spring(
-      this.state.openVal,
-      { toValue: 0, ...this.props.springConfig }
-    ).start(() => {
+    this.props.onBeforeClose((ox, oy, width, height, px, py) => {
+      StatusBar.setHidden(false, 'fade');
       this.setState({
-        isAnimating: false,
+        isAnimating: true,
+        closeOrigin: {
+          x: px,
+          y: py,
+          width,
+          height
+        },
+        isClosing: true,
       });
-      this.props.onClose();
+      Animated.spring(
+        this.state.openVal,
+        { toValue: 0, ...this.props.springConfig }
+      ).start(() => {
+        this.setState({
+          isAnimating: false,
+        });
+        this.props.onClose();
+      });
     });
   },
 
@@ -182,6 +193,10 @@ var LightboxOverlay = React.createClass({
         top: this.state.pan,
       };
       lightboxOpacityStyle.opacity = this.state.pan.interpolate({inputRange: [-WINDOW_HEIGHT, 0, WINDOW_HEIGHT], outputRange: [0, 1, 0]});
+    }
+
+    if (isClosing) {
+      origin = closeOrigin;
     }
 
     var openStyle = [styles.open, {
