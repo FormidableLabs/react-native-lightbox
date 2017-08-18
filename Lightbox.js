@@ -30,6 +30,7 @@ var Lightbox = React.createClass({
     onOpen:          PropTypes.func,
     onClose:         PropTypes.func,
     onBeforeClose:   PropTypes.func,
+    offsetY:         PropTypes.number,
     springConfig:    PropTypes.shape({
       tension:       PropTypes.number,
       friction:      PropTypes.number,
@@ -40,6 +41,7 @@ var Lightbox = React.createClass({
   getDefaultProps: function() {
     return {
       swipeToDismiss: true,
+      offsetY: 0,
       onOpen: () => {},
       onClose: () => {},
     };
@@ -127,7 +129,7 @@ var Lightbox = React.createClass({
       this.props.onBeforeClose();
     }
     this._root.measure((ox, oy, width, height, px, py) => {
-      cb(ox, oy, width, height, px, py);
+      cb(ox, oy, width, height, px, py + this.props.offsetY);
     });
   },
 
