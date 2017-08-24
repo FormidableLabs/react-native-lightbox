@@ -29,6 +29,7 @@ var Lightbox = React.createClass({
     backgroundColor: PropTypes.string,
     onOpen:          PropTypes.func,
     onClose:         PropTypes.func,
+    onBeforeClose:   PropTypes.func,
     springConfig:    PropTypes.shape({
       tension:       PropTypes.number,
       friction:      PropTypes.number,
@@ -122,6 +123,9 @@ var Lightbox = React.createClass({
   },
 
   onBeforeClose(cb) {
+    if (this.props.onBeforeClose) {
+      this.props.onBeforeClose();
+    }
     this._root.measure((ox, oy, width, height, px, py) => {
       cb(ox, oy, width, height, px, py);
     });
