@@ -31,6 +31,7 @@ var Lightbox = React.createClass({
     onClose:         PropTypes.func,
     onBeforeClose:   PropTypes.func,
     offsetY:         PropTypes.number,
+    onCloseDelay:    PropTypes.number,
     springConfig:    PropTypes.shape({
       tension:       PropTypes.number,
       friction:      PropTypes.number,
@@ -44,6 +45,7 @@ var Lightbox = React.createClass({
       swipeToDismiss: true,
       hideStatusBar: true,
       offsetY: 0,
+      onCloseDelay: 0,
       onOpen: () => {},
       onClose: () => {},
     };
@@ -137,14 +139,22 @@ var Lightbox = React.createClass({
   },
 
   onClose: function() {
+    const closeOverlayModal = () => {
+      this.setState({
+        isOpen: false,
+      }, this.props.onClose);
+      if(this.props.navigator) {
+        var routes = this.props.navigator.getCurrentRoutes();
+        routes.pop();
+        this.props.navigator.immediatelyResetRouteStack(routes);
+      }
+    };
+
     this.state.layoutOpacity.setValue(1);
-    this.setState({
-      isOpen: false,
-    }, this.props.onClose);
-    if(this.props.navigator) {
-      var routes = this.props.navigator.getCurrentRoutes();
-      routes.pop();
-      this.props.navigator.immediatelyResetRouteStack(routes);
+    if (this.props.onCloseDelay) {
+      setTimeout(closeOverlayModal, this.props.onCloseDelay);
+    } else {
+      closeOverlayModal();
     }
   },
 
