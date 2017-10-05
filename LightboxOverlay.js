@@ -117,7 +117,9 @@ var LightboxOverlay = React.createClass({
     if (this.props.hideStatusBar) {
       StatusBar.setHidden(true, 'fade');
     }
+
     this.state.pan.setValue(0);
+
     this.setState({
       isAnimating: true,
       target: {
@@ -136,8 +138,9 @@ var LightboxOverlay = React.createClass({
   close: function() {
     this.props.onBeforeClose((ox, oy, width, height, px, py) => {
       if (this.props.hideStatusBar) {
-        StatusBar.setHidden(true, 'false');
+        StatusBar.setHidden(false, 'fade');
       }
+
       this.setState({
         isAnimating: true,
         closeOrigin: {
